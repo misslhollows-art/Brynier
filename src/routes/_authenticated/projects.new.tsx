@@ -199,7 +199,7 @@ function NewProject() {
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="cost">Est. cost ($)</Label>
+                <Label htmlFor="cost">Est. cost (R)</Label>
                 <Input id="cost" type="number" min="0" step="0.5" value={estimated_cost} onChange={(e) => setCost(e.target.value)} />
               </div>
             </div>

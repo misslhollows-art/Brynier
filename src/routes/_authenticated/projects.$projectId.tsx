@@ -143,7 +143,7 @@ function Overview({ project, updateField }: { project: any; updateField: (p: any
           </select>
         </div>
         <div className="space-y-1.5">
-          <Label>Est. cost ($)</Label>
+          <Label>Est. cost (R)</Label>
           <Input
             type="number"
             min="0"
