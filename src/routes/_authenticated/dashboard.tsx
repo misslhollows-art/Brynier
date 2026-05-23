@@ -7,7 +7,7 @@ import { Plus, BookOpen, Cpu } from "lucide-react";
 import { TEMPLATES } from "@/lib/templates";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — TinkerTrack" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — Brynier" }] }),
   component: Dashboard,
 });
 

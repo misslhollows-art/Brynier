@@ -8,7 +8,7 @@ import { buildBackupZip, type OfflineBackupManifest } from "@/lib/offline-backup
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/backup")({
-  head: () => ({ meta: [{ title: "Backup - TinkerTrack" }] }),
+  head: () => ({ meta: [{ title: "Backup - Brynier" }] }),
   component: BackupPage,
 });
 
@@ -54,7 +54,7 @@ function BackupPage() {
       const a = document.createElement("a");
       const stamp = new Date().toISOString().replace(/[:.]/g, "-");
       a.href = url;
-      a.download = `tinkertrack-backup-${stamp}.zip`;
+      a.download = `Brynier-backup-${stamp}.zip`;
       document.body.appendChild(a);
       a.click();
       a.remove();

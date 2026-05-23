@@ -1,17 +1,26 @@
-node_modules
+﻿node_modules
+
+# env files
 .env
 .env.local
+.env.development
+.env.production
 
+# supabase local artifacts
+.supabase
 supabase/.branches
 supabase/.temp
 
+# vercel local artifacts
+.vercel
+
+# cloudflare local artifacts
+.wrangler
+
+# builds/output
 dist
 .output
 coverage
+
+# misc
 .DS_Store
-
-Rynier_Next_Steps.md
-Rynier_Design_Findings.md
-
-.supabase
-

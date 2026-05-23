@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -6,10 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/signup")({
-  head: () => ({ meta: [{ title: "Create account — TinkerTrack" }] }),
+  head: () => ({ meta: [{ title: "Create account â€” Brynier" }] }),
   component: SignupPage,
 });
 
@@ -40,19 +39,24 @@ function SignupPage() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created — check your email to verify.");
+    toast.success("Account created â€” check your email to verify.");
     navigate({ to: "/login", search: { redirect: "/dashboard" } });
   };
-
   const onGoogle = async () => {
     setOauthLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/dashboard" });
-      if (result.error) return toast.error(result.error.message || "Google sign-in failed");
-      if (result.redirected) return;
-      navigate({ to: "/dashboard" });
-    } catch (err: any) {
-      toast.error(err?.message ?? "Google sign-in failed");
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/dashboard',
+        },
+      });
+
+      if (error) return toast.error(error.message || 'Google sign-in failed');
+      if (data?.url) window.location.assign(data.url);
+    } catch (err) {
+      const message = err && typeof err === 'object' && 'message' in err ? err.message : null;
+      toast.error((message as string) ?? 'Google sign-in failed');
     } finally {
       setOauthLoading(false);
     }
@@ -87,7 +91,7 @@ function SignupPage() {
               <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating…" : "Create account"}
+              {loading ? "Creatingâ€¦" : "Create account"}
             </Button>
           </form>
           <p className="mt-5 text-center text-sm text-muted-foreground">
