@@ -1,8 +1,9 @@
 # Smoke Tests (Personal MVP)
 
 ## Auth
-- Sign up with email/password.
-- Confirm you can sign in and sign out.
+✅ Sign up
+✅ Login
+✅ Session/auth working
 
 ## Projects
 - Create a project using the wizard (all 4 steps).

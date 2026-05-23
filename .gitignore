@@ -1,0 +1,14 @@
+node_modules
+.env
+.env.local
+
+supabase/.branches
+supabase/.temp
+
+dist
+.output
+coverage
+.DS_Store
+
+Rynier_Next_Steps.md
+Rynier_Design_Findings.md
