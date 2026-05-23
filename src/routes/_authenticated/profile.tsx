@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/profile")({
-  head: () => ({ meta: [{ title: "Profile — TinkerTrack" }] }),
+  head: () => ({ meta: [{ title: "Profile — Brynier" }] }),
   component: ProfilePage,
 });
 

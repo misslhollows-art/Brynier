@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { getTemplateBySlug, templateRowToTemplate } from "@/lib/templates.db";
 
 export const Route = createFileRoute("/_authenticated/projects/new")({
-  head: () => ({ meta: [{ title: "New project — TinkerTrack" }] }),
+  head: () => ({ meta: [{ title: "New project — Brynier" }] }),
   component: NewProject,
 });
 

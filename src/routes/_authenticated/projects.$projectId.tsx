@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { ArrowLeft, Bot, Boxes, FileCode2, Image as ImageIcon, Notebook, Plus, Trash2, Upload, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/projects/$projectId")({
-  head: () => ({ meta: [{ title: "Project — TinkerTrack" }] }),
+  head: () => ({ meta: [{ title: "Project — Brynier" }] }),
   component: ProjectPage,
 });
 
