@@ -1,7 +1,8 @@
 ﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpen, Bot, Boxes, FileCode2, Notebook, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, Bot, Boxes, FileCode2, Gift, Notebook, Sparkles, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,7 +26,129 @@ function Feature({ icon: Icon, title, body }: { icon: any; title: string; body: 
   );
 }
 
-function Landing() {
+const GIFT_STORAGE_KEY = "brynier_gift_unboxed_2026_05_25";
+
+function getSADateParts(now = new Date()) {
+  // Use a fixed, explicit timezone so behavior is correct even if the viewer is outside SA.
+  const dtf = new Intl.DateTimeFormat("en-ZA", {
+    timeZone: "Africa/Johannesburg",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hour12: false,
+  });
+  const parts = dtf.formatToParts(now);
+  const map = Object.fromEntries(parts.filter((p) => p.type !== "literal").map((p) => [p.type, p.value]));
+  return {
+    year: Number(map.year),
+    month: Number(map.month),
+    day: Number(map.day),
+    hour: Number(map.hour),
+  };
+}
+
+function isBirthdayWindow(now = new Date()) {
+  const { year, month, day, hour } = getSADateParts(now);
+  if (year !== 2026 || month !== 5 || day !== 25) return false;
+  return hour >= 0 && hour < 12;
+}
+
+function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
+  const message =
+    "Paternal/Pa,\n\n" +
+    "Happy birthday\n\n" +
+    "This is for all those times you stack a jar and a metal bowl in the shops and say, \"Nix, don't you think this would make a nice lamp, huh?\".\n\n" +
+    "Sha and I have worked tirelessly to bring you Brynier, so that you can keep track of all your jar lamp projects.\n\n" +
+    "Lots of love Nix and Sha";
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <div className="relative overflow-hidden">
+        <div className="grid-bg pointer-events-none absolute inset-0 opacity-70" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-0 h-96 bg-gradient-hero opacity-[0.10]" />
+
+        {/* Streamers */}
+        <div className="pointer-events-none absolute left-0 top-0 h-56 w-56 -translate-x-10 -translate-y-10 rounded-full bg-primary/20 blur-3xl" />
+        <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 translate-x-10 -translate-y-10 rounded-full bg-fuchsia-500/15 blur-3xl" />
+
+        {/* Balloons */}
+        <div className="pointer-events-none absolute left-6 top-12 hidden sm:block">
+          <div className="h-14 w-10 rounded-full bg-primary/70 shadow-glow" />
+          <div className="mx-auto mt-1 h-10 w-px bg-primary/40" />
+        </div>
+        <div className="pointer-events-none absolute right-10 top-20 hidden sm:block">
+          <div className="h-12 w-9 rounded-full bg-amber-400/70 shadow" />
+          <div className="mx-auto mt-1 h-10 w-px bg-amber-400/40" />
+        </div>
+        <div className="pointer-events-none absolute right-28 top-10 hidden md:block">
+          <div className="h-16 w-11 rounded-full bg-emerald-400/60 shadow" />
+          <div className="mx-auto mt-1 h-12 w-px bg-emerald-400/30" />
+        </div>
+
+        <div className="relative mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
+              <Gift className="h-3.5 w-3.5 text-primary" /> A one-day birthday surprise
+            </span>
+            <h1 className="mt-5 text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+              Happy Birthday, Pa
+            </h1>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Unbox your gift to continue to the Brynier landing page.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-10 grid max-w-4xl gap-6 lg:grid-cols-2">
+            {/* Gift box */}
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-card p-6 shadow-elev">
+              <div className="mx-auto flex max-w-sm flex-col items-center">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 12h3l2-6 4 12 2-6h5" />
+                  </svg>
+                </div>
+
+                <div className="relative w-full">
+                  <div className="mx-auto h-10 w-40 rounded-t-2xl border border-border bg-background/60" />
+                  <div className="mx-auto -mt-1 h-40 w-full max-w-sm rounded-2xl border border-border bg-background/60 shadow-sm" />
+
+                  {/* Ribbon */}
+                  <div className="pointer-events-none absolute left-1/2 top-7 h-40 w-8 -translate-x-1/2 rounded bg-primary/60" />
+                  <div className="pointer-events-none absolute left-1/2 top-24 h-8 w-full max-w-sm -translate-x-1/2 rounded bg-primary/35" />
+
+                  {/* Bow */}
+                  <div className="pointer-events-none absolute left-1/2 top-2 h-10 w-10 -translate-x-1/2 rounded-full bg-primary/45 blur-[0.5px]" />
+                </div>
+
+                <Button className="mt-6 w-full" size="lg" onClick={onUnbox}>
+                  Unbox the gift <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Visible only on 25 May 2026 (00:00–12:00 SAST).
+                </p>
+              </div>
+            </div>
+
+            {/* Birthday card */}
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-card p-6 shadow-elev">
+              <p className="text-sm font-medium uppercase tracking-widest text-primary">Birthday card</p>
+              <div className="mt-4 rounded-xl border border-border bg-background/60 p-5">
+                <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{message}</p>
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground">
+                (If you refresh later, it will disappear automatically after midday.)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -84,7 +207,7 @@ function Landing() {
                 </div>
                 <div className="rounded-lg border border-border bg-background p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">AI assists</p>
-                  <p className="mt-2 text-2xl font-semibold text-primary">âˆž</p>
+                  <p className="mt-2 text-2xl font-semibold text-primary">∞</p>
                   <p className="mt-1 text-xs text-muted-foreground">Trained on your build</p>
                 </div>
               </div>
@@ -96,7 +219,7 @@ function Landing() {
                   <p className="text-sm text-foreground">
                     Your servo is jittering because the ESP32's 3.3V regulator can't supply the inrush current.
                     Power the SG90 from a separate <span className="font-mono text-primary">5V</span> rail, share GND,
-                    and add a <span className="font-mono text-primary">100ÂµF</span> cap across V+/GND.
+                    and add a <span className="font-mono text-primary">100µF</span> cap across V+/GND.
                   </p>
                 </div>
               </div>
@@ -150,4 +273,45 @@ function Landing() {
       </footer>
     </div>
   );
+}
+
+function Landing() {
+  const [mounted, setMounted] = useState(false);
+  const [unboxed, setUnboxed] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    try {
+      setUnboxed(window.localStorage.getItem(GIFT_STORAGE_KEY) === "1");
+    } catch {
+      setUnboxed(false);
+    }
+  }, []);
+
+  const showGift = useMemo(() => {
+    if (!mounted) return false;
+    if (unboxed) return false;
+    try {
+      return isBirthdayWindow();
+    } catch {
+      return false;
+    }
+  }, [mounted, unboxed]);
+
+  if (showGift) {
+    return (
+      <BirthdayGate
+        onUnbox={() => {
+          try {
+            window.localStorage.setItem(GIFT_STORAGE_KEY, "1");
+          } catch {
+            // ignore
+          }
+          setUnboxed(true);
+        }}
+      />
+    );
+  }
+
+  return <LandingPage />;
 }
