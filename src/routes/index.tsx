@@ -6,7 +6,7 @@ import { ArrowRight, BookOpen, Bot, Boxes, FileCode2, Notebook, Sparkles, Zap } 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Brynier â€” Document, debug & ship your DIY electronics projects" },
+      { title: "Brynier — Document, debug & ship your DIY electronics projects" },
       { name: "description", content: "Project companion for makers. Track components, wiring, code, journal, and an AI assistant trained on your project." },
     ],
   }),
@@ -45,7 +45,7 @@ function Landing() {
             </h1>
             <p className="mt-5 text-pretty text-base text-muted-foreground sm:text-lg">
               Brynier is a project companion for DIY electronics makers. Document components, wiring,
-              code and journal entries â€” then troubleshoot with an AI that understands your build.
+              code and journal entries — then troubleshoot with an AI that understands your build.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg" className="shadow-glow">
@@ -75,7 +75,7 @@ function Landing() {
                 <div className="rounded-lg border border-border bg-background p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Components</p>
                   <p className="mt-2 text-2xl font-semibold text-foreground">12</p>
-                  <p className="mt-1 text-xs text-muted-foreground">ESP32 Â· SG90 Â· 5V relayâ€¦</p>
+                  <p className="mt-1 text-xs text-muted-foreground">ESP32 · SG90 · 5V relay…</p>
                 </div>
                 <div className="rounded-lg border border-border bg-background p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Journal</p>
@@ -117,12 +117,12 @@ function Landing() {
           </p>
         </div>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Feature icon={Boxes} title="Components" body="Track every part â€” quantity, voltage, notes, purchase link. Search across all projects." />
-          <Feature icon={Zap} title="Wiring notes" body="Plain-text wiring like GPIO 12 â†’ Relay IN. Versioned alongside the project." />
+          <Feature icon={Boxes} title="Components" body="Track every part — quantity, voltage, notes, purchase link. Search across all projects." />
+          <Feature icon={Zap} title="Wiring notes" body="Plain-text wiring like GPIO 12 → Relay IN. Versioned alongside the project." />
           <Feature icon={FileCode2} title="Code & files" body="Drop in Arduino sketches, Python scripts, firmware. Photos and screenshots too." />
           <Feature icon={Notebook} title="Build journal" body="Timeline of what worked and what didn't. Future-you will thank present-you." />
-          <Feature icon={Bot} title="AI assistant" body="Asks knows your project. Resistor values, wiring sanity, debugging â€” instant answers." />
-          <Feature icon={BookOpen} title="Templates" body="Smart doorbell, dog feeder, plant watering, motion sensor â€” start from a known-good circuit." />
+          <Feature icon={Bot} title="AI assistant" body="Asks knows your project. Resistor values, wiring sanity, debugging — instant answers." />
+          <Feature icon={BookOpen} title="Templates" body="Smart doorbell, dog feeder, plant watering, motion sensor — start from a known-good circuit." />
         </div>
       </section>
 
@@ -136,7 +136,7 @@ function Landing() {
           <p className="mt-3 text-primary-foreground/80">Free forever for your first projects. No setup.</p>
           <div className="mt-7">
             <Button asChild size="lg" variant="secondary" className="shadow-elev">
-              <Link to="/signup">Create your account â†’</Link>
+              <Link to="/signup">Create your account →</Link>
             </Button>
           </div>
         </div>
@@ -144,7 +144,7 @@ function Landing() {
 
       <footer className="border-t border-border bg-background">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-6 text-xs text-muted-foreground sm:px-6">
-          <span>Â© {new Date().getFullYear()} Brynier</span>
+          <span>© {new Date().getFullYear()} Brynier</span>
           <span>Made for makers</span>
         </div>
       </footer>
