@@ -21,7 +21,7 @@ function Layout() {
       </main>
       <footer className="mx-auto max-w-7xl px-4 pb-10 pt-4 text-xs text-muted-foreground sm:px-6">
         <div className="flex items-center justify-between">
-          <span>TinkerTrack · Built for makers</span>
+          <span>Brynier · Built for makers</span>
           <Link to="/templates" className="hover:text-foreground">Browse templates →</Link>
         </div>
       </footer>

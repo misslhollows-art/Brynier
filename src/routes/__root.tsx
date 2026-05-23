@@ -60,10 +60,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TinkerTrack — Document, debug & ship your DIY electronics projects" },
+      { title: "Brynier — Document, debug & ship your DIY electronics projects" },
       { name: "description", content: "Project companion for makers. Track components, wiring, code, journal entries, and get an AI assistant trained on your project context." },
-      { name: "author", content: "TinkerTrack" },
-      { property: "og:title", content: "TinkerTrack — DIY electronics project companion" },
+      { name: "author", content: "Brynier" },
+      { property: "og:title", content: "Brynier — DIY electronics project companion" },
       { property: "og:description", content: "Notion-meets-GitHub for hardware makers. Document, troubleshoot and ship faster." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/templates")({
-  head: () => ({ meta: [{ title: "Templates — TinkerTrack" }] }),
+  head: () => ({ meta: [{ title: "Templates — Brynier" }] }),
   component: TemplatesPage,
 });
 

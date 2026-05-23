@@ -10,7 +10,7 @@ import { Plus, Search } from "lucide-react";
 const STATUSES = ["all", "idea", "building", "testing", "completed", "failed"] as const;
 
 export const Route = createFileRoute("/_authenticated/projects")({
-  head: () => ({ meta: [{ title: "Projects — TinkerTrack" }] }),
+  head: () => ({ meta: [{ title: "Projects — Brynier" }] }),
   component: ProjectsRoute,
 });
 
