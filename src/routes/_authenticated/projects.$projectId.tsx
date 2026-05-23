@@ -1,8 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,9 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/StatusBadge";
-import { askAssistant } from "@/lib/ai.functions";
 import { toast } from "sonner";
-import { ArrowLeft, Bot, Boxes, FileCode2, Image as ImageIcon, Notebook, Plus, Send, Trash2, Upload, Zap } from "lucide-react";
+import { ArrowLeft, Bot, Boxes, FileCode2, Image as ImageIcon, Notebook, Plus, Trash2, Upload, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/projects/$projectId")({
   head: () => ({ meta: [{ title: "Project — TinkerTrack" }] }),
@@ -116,7 +113,7 @@ function ProjectPage() {
         {tab === "wiring" && <Wiring project={project} updateField={updateField} />}
         {tab === "files" && <Files projectId={projectId} />}
         {tab === "journal" && <Journal projectId={projectId} />}
-        {tab === "ai" && <AIChat projectId={projectId} />}
+        {tab === "ai" && <AskAI project={project} projectId={projectId} />}
       </div>
     </div>
   );
@@ -566,72 +563,107 @@ function Journal({ projectId }: { projectId: string }) {
   );
 }
 
-function AIChat({ projectId }: { projectId: string }) {
-  const qc = useQueryClient();
-  const ask = useServerFn(askAssistant);
-  const [q, setQ] = useState("");
+function AskAI({ project, projectId }: { project: any; projectId: string }) {
   const [loading, setLoading] = useState(false);
 
-  const { data: msgs = [] } = useQuery({
-    queryKey: ["ai", projectId],
+  const { data: components = [] } = useQuery({
+    queryKey: ["ai", "ctx", projectId, "components"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("ai_messages").select("*").eq("project_id", projectId).order("created_at");
-      if (error) throw error; return data;
+      const { data, error } = await supabase
+        .from("components")
+        .select("name,quantity,voltage,notes")
+        .eq("project_id", projectId);
+      if (error) throw error;
+      return data;
     },
   });
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); if (!q.trim() || loading) return;
-    setLoading(true); const question = q; setQ("");
+  const { data: journal = [] } = useQuery({
+    queryKey: ["ai", "ctx", projectId, "journal"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("journal_entries")
+        .select("entry,created_at")
+        .eq("project_id", projectId)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const buildPrompt = () => {
+    const header = `PROJECT: ${project.title}\nSTATUS: ${project.status} | DIFFICULTY: ${project.difficulty}\nDESCRIPTION: ${project.description || "(none)"}\nTAGS: ${(project.tags || []).join(", ") || "(none)"}`;
+
+    const comps = (components || []).length
+      ? (components || [])
+          .map((c: any) => `- ${c.quantity ?? 1}x ${c.name}${c.voltage ? ` (${c.voltage})` : ""}${c.notes ? ` - ${c.notes}` : ""}`)
+          .join("\n")
+      : "(none)";
+
+    const wiring = project.wiring_notes || "(none)";
+
+    const recent = (journal || []).length
+      ? (journal || []).map((j: any) => `- ${j.entry}`).join("\n")
+      : "(none)";
+
+    return [
+      "You are an electronics co-pilot. Be concise, practical, and safety-aware.",
+      "",
+      header,
+      "",
+      "COMPONENTS:\n" + comps,
+      "",
+      "WIRING NOTES:\n" + wiring,
+      "",
+      "RECENT JOURNAL:\n" + recent,
+      "",
+      "QUESTION:",
+    ].join("\n");
+  };
+
+  const onCopy = async () => {
+    setLoading(true);
     try {
-      await ask({ data: { projectId, question } });
-      qc.invalidateQueries({ queryKey: ["ai", projectId] });
+      const text = buildPrompt();
+      await navigator.clipboard.writeText(text);
+      toast.success("Copied build context. Paste it into your AI tool.");
     } catch (err: any) {
-      toast.error(err?.message ?? "AI failed");
-    } finally { setLoading(false); }
+      toast.error(err?.message ?? "Copy failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onOpen = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+    toast.message("Paste the copied context into the chat.");
   };
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
-      <div className="flex min-h-[60vh] flex-col rounded-xl border border-border bg-gradient-card">
-        <div className="flex-1 space-y-4 overflow-y-auto p-5">
-          {msgs.length === 0 && (
-            <div className="rounded-lg bg-primary/5 p-4 text-sm text-muted-foreground">
-              Ask anything about this build — debugging, resistor values, voltage concerns, wiring sanity. The assistant sees your components, wiring notes and journal.
-            </div>
-          )}
-          {msgs.map((m) => (
-            <div key={m.id} className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${m.role === "user" ? "bg-primary text-primary-foreground" : "bg-accent text-primary"}`}>
-                {m.role === "user" ? "Y" : <Bot className="h-4 w-4" />}
-              </div>
-              <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${m.role === "user" ? "bg-primary text-primary-foreground" : "bg-card text-foreground"}`}>
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  <ReactMarkdown>{m.content}</ReactMarkdown>
-                </div>
-              </div>
-            </div>
-          ))}
-          {loading && <div className="text-sm text-muted-foreground">Thinking…</div>}
+    <div className="space-y-4">
+      <div className="rounded-xl border border-border bg-gradient-card p-6">
+        <h2 className="text-lg font-semibold text-foreground">Ask AI (external)</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          The in-app AI assistant is disabled for now. Copy your build context and ask an external AI.
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button type="button" onClick={onCopy} disabled={loading}>
+            Copy build context
+          </Button>
+          <Button type="button" variant="outline" onClick={() => onOpen("https://chatgpt.com/")} disabled={loading}>
+            Open ChatGPT
+          </Button>
+          <Button type="button" variant="outline" onClick={() => onOpen("https://gemini.google.com/app")} disabled={loading}>
+            Open Gemini
+          </Button>
         </div>
-        <form onSubmit={submit} className="flex gap-2 border-t border-border p-3">
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Why is my ESP32 restarting?" disabled={loading} />
-          <Button type="submit" disabled={loading || !q.trim()}><Send className="h-4 w-4" /></Button>
-        </form>
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          Tip: click "Copy build context", open your AI tool, paste, then add your question.
+        </p>
       </div>
-      <aside className="space-y-3 rounded-xl border border-border bg-gradient-card p-4 text-sm">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Try asking</h3>
-        {[
-          "Why does my servo jitter?",
-          "What pull-down resistor for a button on GPIO 13?",
-          "How long will a 2000mAh battery last?",
-          "Sanity-check my wiring",
-        ].map((p) => (
-          <button key={p} onClick={() => setQ(p)} className="block w-full rounded-lg border border-border bg-background p-2.5 text-left text-xs text-foreground transition hover:border-primary hover:text-primary">
-            {p}
-          </button>
-        ))}
-      </aside>
     </div>
   );
 }

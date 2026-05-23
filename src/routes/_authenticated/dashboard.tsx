@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ProjectCard } from "@/components/ProjectCard";
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
+  const nav = useNavigate();
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ["projects", "recent"],
     queryFn: async () => {
@@ -64,9 +65,7 @@ function Dashboard() {
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">Workshop</h1>
           <p className="mt-1 text-sm text-muted-foreground">Your latest builds, journals and ideas.</p>
         </div>
-        <Button asChild className="shadow-glow">
-          <Link to="/projects/new"><Plus className="mr-1.5 h-4 w-4" /> New project</Link>
-        </Button>
+        <Button className="shadow-glow" type="button" onClick={() => nav({ to: "/projects/new" })}><Plus className="mr-1.5 h-4 w-4" /> New project</Button>
       </div>
 
       <section className="grid gap-4 sm:grid-cols-3">

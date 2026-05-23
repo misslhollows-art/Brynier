@@ -244,6 +244,51 @@ export type Database = {
         }
         Relationships: []
       }
+      templates: {
+        Row: {
+          components: Json
+          created_at: string
+          description: string | null
+          difficulty: string | null
+          estimated_cost: number | null
+          id: string
+          owner_user_id: string | null
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          wiring_notes: string | null
+        }
+        Insert: {
+          components?: Json
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          estimated_cost?: number | null
+          id?: string
+          owner_user_id?: string | null
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          wiring_notes?: string | null
+        }
+        Update: {
+          components?: Json
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          estimated_cost?: number | null
+          id?: string
+          owner_user_id?: string | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          wiring_notes?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

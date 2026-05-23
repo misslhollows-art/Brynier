@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { getTemplateBySlug, templateRowToTemplate } from "@/lib/templates.db";
 
 export const Route = createFileRoute("/_authenticated/projects/new")({
   head: () => ({ meta: [{ title: "New project — TinkerTrack" }] }),
@@ -35,11 +36,19 @@ function NewProject() {
   const [pickedFiles, setPickedFiles] = useState<File[]>([]);
 
   // Pre-fill from template
-  useState(() => {
+  useEffect(() => {
     if (!search.template) return;
-    import("@/lib/templates").then(({ findTemplate }) => {
-      const t = findTemplate(search.template!);
-      if (!t) return;
+    let cancelled = false;
+    Promise.resolve()
+      .then(async () => {
+        const row = await getTemplateBySlug(search.template!);
+        if (row) return templateRowToTemplate(row);
+        const { findTemplate } = await import("@/lib/templates");
+        return findTemplate(search.template!);
+      })
+      .then((t) => {
+        if (cancelled) return;
+        if (!t) return;
       setTitle(t.title);
       setDescription(t.description);
       setTags(t.tags.join(", "));
@@ -56,7 +65,10 @@ function NewProject() {
         );
       }
     });
-  });
+    return () => {
+      cancelled = true;
+    };
+  }, [search.template]);
 
   const addDraftComponent = (e: React.FormEvent) => {
     e.preventDefault();
@@ -264,7 +276,17 @@ function NewProject() {
             </Button>
           )}
           {step < 4 ? (
-            <Button type="button" disabled={loading || (step === 1 && !title.trim())} onClick={() => setStep((step + 1) as any)}>
+            <Button
+              type="button"
+              disabled={loading}
+              onClick={() => {
+                if (step === 1 && !title.trim()) {
+                  toast.error("Name is required to continue");
+                  return;
+                }
+                setStep((step + 1) as any);
+              }}
+            >
               Next
             </Button>
           ) : (

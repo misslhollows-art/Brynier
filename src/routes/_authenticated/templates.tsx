@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { TEMPLATES } from "@/lib/templates";
+import { listVisibleTemplates, templateRowToTemplate, type TemplateLike } from "@/lib/templates.db";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen } from "lucide-react";
 
@@ -9,6 +11,31 @@ export const Route = createFileRoute("/_authenticated/templates")({
 });
 
 function TemplatesPage() {
+  const [dbTemplates, setDbTemplates] = useState<TemplateLike[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    listVisibleTemplates()
+      .then((rows) => rows.map(templateRowToTemplate))
+      .then((items) => {
+        if (cancelled) return;
+        setDbTemplates(items);
+      })
+      .catch(() => {
+        // Fall back to bundled templates silently
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const templates = useMemo(() => {
+    const merged = new Map<string, TemplateLike>();
+    for (const t of TEMPLATES) merged.set(t.slug, t);
+    for (const t of dbTemplates ?? []) merged.set(t.slug, t);
+    return Array.from(merged.values());
+  }, [dbTemplates]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -17,7 +44,7 @@ function TemplatesPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {TEMPLATES.map((t) => (
+        {templates.map((t) => (
           <div key={t.slug} className="flex flex-col rounded-xl border border-border bg-gradient-card p-5 shadow-sm transition hover:shadow-elev">
             <div className="flex items-center gap-2 text-primary">
               <BookOpen className="h-4 w-4" />
@@ -30,7 +57,7 @@ function TemplatesPage() {
                 <span key={tag} className="rounded-md bg-accent px-1.5 py-0.5 text-[10px] font-medium uppercase text-accent-foreground">{tag}</span>
               ))}
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">~ ${t.estimated_cost} · {t.components.length} components</p>
+            <p className="mt-3 text-xs text-muted-foreground">Free · {t.components.length} components</p>
             <Button asChild size="sm" className="mt-4 self-start">
               <Link to="/projects/new" search={{ template: t.slug } as any}>
                 Use template <ArrowRight className="ml-1 h-3.5 w-3.5" />

@@ -39,7 +39,7 @@ export function Header() {
             </>
           ) : !loading ? (
             <>
-              <Link to="/login" className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
+              <Link to="/login" search={{ redirect: "/dashboard" }} className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
                 Sign in
               </Link>
               <Button asChild size="sm">

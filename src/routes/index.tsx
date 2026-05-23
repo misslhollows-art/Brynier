@@ -54,7 +54,7 @@ function Landing() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link to="/login">I already have an account</Link>
+                <Link to="/login" search={{ redirect: "/dashboard" }}>I already have an account</Link>
               </Button>
             </div>
             <p className="mt-4 text-xs text-muted-foreground">

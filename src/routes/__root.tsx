@@ -48,7 +48,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Try again
           </button>
-          <a href="/" className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent">Home</a>
+          <Link to="/dashboard" className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent">Home</Link>
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head><HeadContent /></head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <Scripts />
       </body>

@@ -1,4 +1,4 @@
-import { unzipSync, zipSync, strToU8, u8ToStr } from "fflate";
+import { unzipSync, zipSync, strToU8, strFromU8 } from "fflate";
 
 export type OfflineBackupManifest = {
   version: 1;
@@ -32,7 +32,7 @@ export function parseBackupZip(zipBytes: Uint8Array): {
   const unpacked = unzipSync(zipBytes);
   const manifestBytes = unpacked["manifest.json"];
   if (!manifestBytes) throw new Error("Missing manifest.json");
-  const manifest = JSON.parse(u8ToStr(manifestBytes)) as OfflineBackupManifest;
+  const manifest = JSON.parse(strFromU8(manifestBytes)) as OfflineBackupManifest;
   if (!manifest || manifest.version !== 1) throw new Error("Unsupported backup format");
 
   const fileBytesByPath: Record<string, Uint8Array> = {};

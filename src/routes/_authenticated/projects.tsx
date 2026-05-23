@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,10 +11,17 @@ const STATUSES = ["all", "idea", "building", "testing", "completed", "failed"] a
 
 export const Route = createFileRoute("/_authenticated/projects")({
   head: () => ({ meta: [{ title: "Projects — TinkerTrack" }] }),
-  component: ProjectsPage,
+  component: ProjectsRoute,
 });
 
-function ProjectsPage() {
+function ProjectsRoute() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  if (pathname !== "/projects") return <Outlet />;
+  return <ProjectsIndex />;
+}
+
+function ProjectsIndex() {
+  const nav = useNavigate();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<(typeof STATUSES)[number]>("all");
 
@@ -58,8 +65,8 @@ function ProjectsPage() {
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">Projects</h1>
           <p className="mt-1 text-sm text-muted-foreground">{projects.length} total</p>
         </div>
-        <Button asChild className="shadow-glow">
-          <Link to="/projects/new"><Plus className="mr-1.5 h-4 w-4" /> New project</Link>
+        <Button className="shadow-glow" type="button" onClick={() => nav({ to: "/projects/new" })}>
+          <Plus className="mr-1.5 h-4 w-4" /> New project
         </Button>
       </div>
 

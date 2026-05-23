@@ -41,7 +41,7 @@ function SignupPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Account created — check your email to verify.");
-    navigate({ to: "/login" });
+    navigate({ to: "/login", search: { redirect: "/dashboard" } });
   };
 
   const onGoogle = async () => {
@@ -91,7 +91,7 @@ function SignupPage() {
             </Button>
           </form>
           <p className="mt-5 text-center text-sm text-muted-foreground">
-            Already have one? <Link to="/login" className="font-medium text-primary hover:underline">Sign in</Link>
+            Already have one? <Link to="/login" search={{ redirect: "/dashboard" }} className="font-medium text-primary hover:underline">Sign in</Link>
           </p>
         </div>
       </div>

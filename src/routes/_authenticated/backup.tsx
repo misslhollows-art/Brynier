@@ -48,7 +48,8 @@ function BackupPage() {
       }
 
       const zipBytes = buildBackupZip({ manifest, fileBytesByPath });
-      const blob = new Blob([zipBytes], { type: "application/zip" });
+      const zipU8 = new Uint8Array(zipBytes);
+      const blob = new Blob([zipU8], { type: "application/zip" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       const stamp = new Date().toISOString().replace(/[:.]/g, "-");
