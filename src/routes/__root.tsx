@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+﻿import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -60,7 +60,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Brynier — Document, debug & ship your DIY electronics projects" },
+      { title: "Brynier — Document, debug and ship your DIY electronics projects" },
       { name: "description", content: "Project companion for makers. Track components, wiring, code, journal entries, and get an AI assistant trained on your project context." },
       { name: "author", content: "Brynier" },
       { property: "og:title", content: "Brynier — DIY electronics project companion" },
@@ -68,7 +68,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }, { rel: "icon", href: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2220%22%20fill%3D%22%234f46e5%22/%3E%3Ctext%20x%3D%2250%22%20y%3D%2268%22%20font-size%3D%2260%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-family%3D%22Arial%2Csans-serif%22%3ET%3C/text%3E%3C/svg%3E" }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/pwa-192.png" },
+      {
+        rel: "icon",
+        href: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2220%22%20fill%3D%22%234f46e5%22/%3E%3Ctext%20x%3D%2250%22%20y%3D%2268%22%20font-size%3D%2260%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-family%3D%22Arial%2Csans-serif%22%3EB%3C/text%3E%3C/svg%3E",
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -102,6 +110,12 @@ function AuthSync() {
 }
 
 function RootComponent() {
+  useEffect(() => {
+    if (!import.meta.env.PROD) return;
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }, []);
+
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>

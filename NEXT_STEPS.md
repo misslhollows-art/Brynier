@@ -25,10 +25,11 @@ Notes:
 Goal: make the web app installable on Android/desktop before doing native apps.
 
 Next tasks:
-- Add `manifest.webmanifest` (name, icons, theme colors).
-- Add proper app icons (192/512 + maskable).
-- Add a service worker (cache the app shell).
-- Verify install prompt + basic offline “shell” behavior.
+- [x] Add `manifest.webmanifest` (name, icons, theme colors).
+- [x] Add placeholder app icons (192/512 + maskable).
+- [x] Add a service worker (cache the app shell).
+- [ ] Verify install prompt (Chrome/Android) and “Add to Home Screen”.
+- [ ] Verify offline fallback shows `offline.html` on a hard refresh while offline. Follow `PWA_VERIFY.md`.
 
 ### Phase 3 — Desktop/mobile wrappers (later)
 
