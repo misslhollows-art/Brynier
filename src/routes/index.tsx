@@ -98,7 +98,7 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
           50% { transform: translate3d(0,2px,0) rotate(calc(var(--r) * -1)); }
           100% { transform: translate3d(0,0,0) rotate(var(--r)); }
         }
-        @keyframes brynier-sparkle-pop {
+        @keyframes brynier-reveal-fade {\n          0% { opacity: 0; }\n          10% { opacity: 1; }\n          80% { opacity: 1; }\n          100% { opacity: 0; }\n        }\n        @keyframes brynier-sparkle-pop {
           0% { transform: translate(var(--x0), var(--y0)) scale(0.2) rotate(0deg); opacity: 0; }
           15% { opacity: 1; }
           100% { transform: translate(var(--x1), var(--y1)) scale(1.1) rotate(240deg); opacity: 0; }
@@ -114,7 +114,7 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
           will-change: transform;
         }
         .brynier-sparkle {
-          animation: brynier-sparkle-pop 900ms ease-out forwards;
+          animation: brynier-sparkle-pop 1400ms ease-out forwards;
           will-change: transform, opacity;
         }
       `}</style>
@@ -198,7 +198,7 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
             <div className="relative mx-auto w-full max-w-3xl">
               {/* Box */}
               <div className="relative mx-auto w-full">
-                <div className="brynier-giftbox relative mx-auto w-[min(34rem,92%)]">
+                <div className="brynier-giftbox relative mx-auto w-[min(38rem,96%)]">
                   {/* Lid */}
                   <div className="relative mx-auto h-24 w-full rounded-[2.25rem] bg-gradient-to-b from-red-500/95 to-red-600/95 shadow-elev">
                     {/* Lid highlight */}
@@ -223,7 +223,7 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
                   </div>
 
                   {/* Box body */}
-                  <div className="relative mx-auto -mt-6 h-[28rem] w-[min(34rem,92%)] rounded-[2.25rem] bg-gradient-to-b from-red-600/95 to-red-700/95 shadow-elev sm:h-[32rem]">
+                  <div className="relative mx-auto -mt-6 h-[28rem] w-[min(38rem,96%)] rounded-[2.25rem] bg-gradient-to-b from-red-600/95 to-red-700/95 shadow-elev sm:h-[32rem]">
                     {/* Inner highlight */}
                     <div className="pointer-events-none absolute inset-3 rounded-[2rem] bg-white/6" />
 
@@ -404,19 +404,25 @@ function LandingPage() {
 
 function SparkleOverlay() {
   const sparks = [
-    { x0: -10, y0: 10, x1: -140, y1: -120, s: 18, d: 0 },
-    { x0: 0, y0: 0, x1: -60, y1: -180, s: 14, d: 80 },
-    { x0: 12, y0: 18, x1: 40, y1: -160, s: 16, d: 40 },
-    { x0: 18, y0: 0, x1: 160, y1: -120, s: 20, d: 10 },
-    { x0: -8, y0: 0, x1: 120, y1: -40, s: 12, d: 120 },
-    { x0: 0, y0: -8, x1: -120, y1: -40, s: 12, d: 140 },
-    { x0: 0, y0: 0, x1: 20, y1: 180, s: 10, d: 90 },
-    { x0: 0, y0: 0, x1: -20, y1: 180, s: 10, d: 110 },
+    { x1: -220, y1: -160, s: 14, d: 0, hue: 50 },
+    { x1: -160, y1: -240, s: 12, d: 60, hue: 200 },
+    { x1: -80, y1: -280, s: 10, d: 120, hue: 310 },
+    { x1: 80, y1: -280, s: 10, d: 90, hue: 120 },
+    { x1: 160, y1: -240, s: 12, d: 30, hue: 30 },
+    { x1: 220, y1: -160, s: 14, d: 70, hue: 260 },
+
+    { x1: -260, y1: -40, s: 12, d: 140, hue: 45 },
+    { x1: 260, y1: -40, s: 12, d: 160, hue: 180 },
+    { x1: -220, y1: 120, s: 10, d: 180, hue: 300 },
+    { x1: 220, y1: 120, s: 10, d: 200, hue: 90 },
+
+    { x1: -120, y1: 260, s: 10, d: 220, hue: 60 },
+    { x1: 120, y1: 260, s: 10, d: 240, hue: 210 },
   ];
 
   return (
     <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
-      <div className="absolute inset-0 bg-primary/10 backdrop-blur-[1px]" />
+      <div className="absolute inset-0 bg-primary/30 backdrop-blur-[1.5px]" style={{ animation: "brynier-reveal-fade 2600ms ease-out forwards" }} />
       <div className="absolute left-1/2 top-1/2">
         {sparks.map((sp, i) => (
           <div
@@ -426,11 +432,10 @@ function SparkleOverlay() {
               width: sp.s,
               height: sp.s,
               borderRadius: 9999,
-              background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,1), rgba(255,255,255,0) 65%)",
-              boxShadow: "0 0 22px rgba(79,70,229,0.45)",
-              transform: `translate(${sp.x0}px, ${sp.y0}px)`,
-              ['--x0' as any]: `${sp.x0}px`,
-              ['--y0' as any]: `${sp.y0}px`,
+              background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,1), hsla(${sp.hue}, 95%, 65%, 0.95) 45%, rgba(255,255,255,0) 72%)`,
+              boxShadow: `0 0 26px hsla(${sp.hue}, 95%, 55%, 0.65), 0 0 50px hsla(${sp.hue}, 95%, 55%, 0.25)`,
+              ['--x0' as any]: `0px`,
+              ['--y0' as any]: `0px`,
               ['--x1' as any]: `${sp.x1}px`,
               ['--y1' as any]: `${sp.y1}px`,
               animationDelay: `${sp.d}ms`,
@@ -440,7 +445,9 @@ function SparkleOverlay() {
       </div>
     </div>
   );
-}function Landing() {
+}
+
+function Landing() {
   const [mounted, setMounted] = useState(false);
   const [unboxed, setUnboxed] = useState(false);
   const [revealing, setRevealing] = useState(false);
@@ -480,7 +487,7 @@ function SparkleOverlay() {
               }
               setUnboxed(true);
               setRevealing(false);
-            }, 850);
+            }, 2600);
           }}
         />
       </>
