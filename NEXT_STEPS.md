@@ -28,8 +28,9 @@ Next tasks:
 - [x] Add `manifest.webmanifest` (name, icons, theme colors).
 - [x] Add placeholder app icons (192/512 + maskable).
 - [x] Add a service worker (cache the app shell).
-- [ ] Verify install prompt (Chrome/Android) and “Add to Home Screen”.
-- [ ] Verify offline fallback shows `offline.html` on a hard refresh while offline. Follow `PWA_VERIFY.md`.
+- [x] Add `favicon.ico` to stop browser 404 noise.
+- [x] Verify install prompt (Chrome/Android) and “Add to Home Screen”.
+- [x] Verify offline fallback works (see `PWA_VERIFY.md`).
 
 ### Phase 3 — Desktop/mobile wrappers (later)
 
