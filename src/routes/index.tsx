@@ -62,15 +62,56 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
     "Sha and I have worked tirelessly to bring you Brynier, so that you can keep track of all your jar lamp projects.\n\n" +
     "Lots of love Nix and Sha";
 
+  const balloons = [
+    { left: 6, top: 10, hue: 330, s: 1.0, dur: 8.2, delay: 0.0 },
+    { left: 12, top: 26, hue: 55, s: 0.9, dur: 9.4, delay: 0.6 },
+    { left: 18, top: 14, hue: 160, s: 1.05, dur: 8.8, delay: 1.2 },
+    { left: 26, top: 6, hue: 210, s: 0.95, dur: 10.0, delay: 0.4 },
+    { left: 34, top: 18, hue: 285, s: 1.1, dur: 8.6, delay: 0.9 },
+    { left: 44, top: 8, hue: 35, s: 1.0, dur: 9.8, delay: 0.2 },
+    { left: 54, top: 16, hue: 120, s: 0.92, dur: 10.4, delay: 0.7 },
+    { left: 64, top: 7, hue: 190, s: 1.08, dur: 9.2, delay: 1.0 },
+    { left: 74, top: 18, hue: 20, s: 0.9, dur: 11.0, delay: 0.3 },
+    { left: 82, top: 10, hue: 260, s: 1.02, dur: 9.6, delay: 0.8 },
+    { left: 88, top: 28, hue: 95, s: 0.88, dur: 10.6, delay: 1.4 },
+    { left: 92, top: 14, hue: 300, s: 1.0, dur: 8.9, delay: 0.5 },
+  ] as const;
+
+  const streamers = [
+    { left: 8, rot: -10, w: 120, h: 14, hue: 40, dur: 6.2, delay: 0.0 },
+    { left: 26, rot: 8, w: 160, h: 14, hue: 200, dur: 7.2, delay: 0.6 },
+    { left: 48, rot: -6, w: 140, h: 14, hue: 320, dur: 6.8, delay: 0.2 },
+    { left: 68, rot: 12, w: 150, h: 14, hue: 120, dur: 7.4, delay: 0.9 },
+    { left: 86, rot: -8, w: 130, h: 14, hue: 260, dur: 6.6, delay: 0.4 },
+  ] as const;
+
   return (
     <div className="min-h-screen overflow-hidden bg-background">
-      <Header />
-
       <style>{`
+        @keyframes brynier-float {
+          0% { transform: translate3d(0, 0, 0) scale(var(--s)) rotate(-2deg); }
+          50% { transform: translate3d(12px, -14px, 0) scale(var(--s)) rotate(3deg); }
+          100% { transform: translate3d(-8px, 6px, 0) scale(var(--s)) rotate(-2deg); }
+        }
+        @keyframes brynier-sway {
+          0% { transform: translate3d(0,0,0) rotate(var(--r)); }
+          50% { transform: translate3d(0,2px,0) rotate(calc(var(--r) * -1)); }
+          100% { transform: translate3d(0,0,0) rotate(var(--r)); }
+        }
         @keyframes brynier-sparkle-pop {
           0% { transform: translate(var(--x0), var(--y0)) scale(0.2) rotate(0deg); opacity: 0; }
           15% { opacity: 1; }
           100% { transform: translate(var(--x1), var(--y1)) scale(1.1) rotate(240deg); opacity: 0; }
+        }
+        .brynier-balloon {
+          animation: brynier-float var(--dur) ease-in-out infinite;
+          animation-delay: var(--delay);
+          will-change: transform;
+        }
+        .brynier-streamer {
+          animation: brynier-sway var(--dur) ease-in-out infinite;
+          animation-delay: var(--delay);
+          will-change: transform;
         }
         .brynier-sparkle {
           animation: brynier-sparkle-pop 900ms ease-out forwards;
@@ -82,26 +123,61 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
         <div className="grid-bg pointer-events-none absolute inset-0 opacity-70" />
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-0 h-96 bg-gradient-hero opacity-[0.10]" />
 
-        {/* Decorative blobs */}
-        <div className="pointer-events-none absolute left-0 top-0 h-56 w-56 -translate-x-10 -translate-y-10 rounded-full bg-primary/20 blur-3xl" />
-        <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 translate-x-10 -translate-y-10 rounded-full bg-fuchsia-500/15 blur-3xl" />
+        {/* Streamers */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-44">
+          {streamers.map((s, i) => (
+            <div
+              key={i}
+              className="brynier-streamer absolute top-6 rounded-full opacity-70 blur-[0.2px]"
+              style={{
+                left: `${s.left}%`,
+                width: `${s.w}px`,
+                height: `${s.h}px`,
+                ['--r' as any]: `${s.rot}deg`,
+                ['--dur' as any]: `${s.dur}s`,
+                ['--delay' as any]: `${s.delay}s`,
+                transform: `rotate(${s.rot}deg)`,
+                background: `linear-gradient(90deg, hsla(${s.hue}, 90%, 65%, 0.85), hsla(${(s.hue + 40) % 360}, 90%, 65%, 0.25))`,
+              }}
+            />
+          ))}
+        </div>
 
         {/* Balloons */}
-        <div className="pointer-events-none absolute left-6 top-12 hidden sm:block">
-          <div className="h-14 w-10 rounded-full bg-primary/70 shadow-glow" />
-          <div className="mx-auto mt-1 h-10 w-px bg-primary/40" />
-        </div>
-        <div className="pointer-events-none absolute right-10 top-20 hidden sm:block">
-          <div className="h-12 w-9 rounded-full bg-amber-400/70 shadow" />
-          <div className="mx-auto mt-1 h-10 w-px bg-amber-400/40" />
-        </div>
-        <div className="pointer-events-none absolute right-28 top-10 hidden md:block">
-          <div className="h-16 w-11 rounded-full bg-emerald-400/60 shadow" />
-          <div className="mx-auto mt-1 h-12 w-px bg-emerald-400/30" />
+        <div className="pointer-events-none absolute inset-0">
+          {balloons.map((b, i) => (
+            <div
+              key={i}
+              className="brynier-balloon absolute"
+              style={{
+                left: `${b.left}%`,
+                top: `${b.top}%`,
+                ['--s' as any]: b.s,
+                ['--dur' as any]: `${b.dur}s`,
+                ['--delay' as any]: `${b.delay}s`,
+              }}
+            >
+              <div
+                className="relative"
+                style={{
+                  width: 44,
+                  height: 60,
+                  borderRadius: 9999,
+                  background: `radial-gradient(circle at 30% 25%, rgba(255,255,255,0.85), hsla(${b.hue}, 90%, 62%, 0.95) 35%, hsla(${b.hue}, 90%, 52%, 0.95) 70%)`,
+                  boxShadow: `0 14px 28px hsla(${b.hue}, 90%, 40%, 0.25)`,
+                }}
+              >
+                <div
+                  className="absolute left-1/2 top-[56px] h-10 w-px -translate-x-1/2"
+                  style={{ background: `hsla(${b.hue}, 70%, 70%, 0.35)` }}
+                />
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Main stage: lock to viewport (minus header) so it never scrolls */}
-        <div className="relative mx-auto flex h-[calc(100vh-3.5rem)] max-w-6xl flex-col items-center justify-center px-4 sm:px-6">
+        {/* Main stage: no nav, locked to viewport */}
+        <div className="relative mx-auto flex h-screen max-w-6xl flex-col items-center justify-center px-4 sm:px-6">
           <div className="mx-auto w-full max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
               <Gift className="h-3.5 w-3.5 text-primary" /> A one-day birthday surprise
@@ -114,38 +190,39 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
             </p>
           </div>
 
-          {/* Gift box + attached card */}
+          {/* Gift box stage */}
           <div className="relative mt-8 w-full max-w-4xl">
             <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-card p-6 shadow-elev sm:p-10">
-              {/* Attached card */}
-              <div className="absolute left-6 top-6 z-10 w-[min(26rem,80%)] -rotate-2">
-                <div className="relative rounded-2xl border border-border bg-background/80 p-5 shadow-sm backdrop-blur">
-                  <div className="absolute -left-3 top-6 h-10 w-10 rotate-12 rounded-full bg-amber-300/50 blur-xl" />
-                  <p className="text-xs font-medium uppercase tracking-widest text-primary">Birthday card</p>
-                  <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground">{message}</p>
-                </div>
-                {/* Tape */}
-                <div className="pointer-events-none absolute -right-4 -top-3 h-8 w-20 rotate-12 rounded bg-amber-200/30 blur-[0.2px]" />
-              </div>
-
-              {/* Box body (big) */}
-              <div className="mx-auto mt-28 max-w-xl sm:mt-24">
-                <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 12h3l2-6 4 12 2-6h5" />
-                  </svg>
-                </div>
-
+              <div className="mx-auto max-w-xl">
                 <div className="relative mt-6">
-                  <div className="mx-auto h-12 w-56 rounded-t-3xl border border-border bg-background/60" />
-                  <div className="mx-auto -mt-2 h-72 w-full rounded-3xl border border-border bg-background/60 shadow-sm sm:h-80" />
+                  {/* Box lid */}
+                  <div className="mx-auto h-12 w-64 rounded-t-3xl border border-border bg-red-500/70 shadow-sm" />
 
-                  {/* Ribbon */}
-                  <div className="pointer-events-none absolute left-1/2 top-6 h-[calc(100%-2.5rem)] w-10 -translate-x-1/2 rounded bg-primary/55" />
-                  <div className="pointer-events-none absolute left-1/2 top-1/2 h-10 w-[92%] -translate-x-1/2 -translate-y-1/2 rounded bg-primary/30" />
+                  {/* Box body */}
+                  <div className="mx-auto -mt-2 h-80 w-full rounded-3xl border border-border bg-red-600/70 shadow-elev sm:h-[26rem]" />
+
+                  {/* Ribbon (yellow) */}
+                  <div className="pointer-events-none absolute left-1/2 top-6 h-[calc(100%-2.5rem)] w-10 -translate-x-1/2 rounded bg-yellow-300/90" />
+                  <div className="pointer-events-none absolute left-1/2 top-1/2 h-10 w-[92%] -translate-x-1/2 -translate-y-1/2 rounded bg-yellow-300/55" />
 
                   {/* Bow */}
-                  <div className="pointer-events-none absolute left-1/2 top-2 h-12 w-12 -translate-x-1/2 rounded-full bg-primary/45 blur-[0.5px]" />
+                  <div className="pointer-events-none absolute left-1/2 top-1 h-12 w-12 -translate-x-1/2 rounded-full bg-yellow-200/80 blur-[0.3px]" />
+
+                  {/* Note attached ON the box */}
+                  <div className="absolute left-6 top-10 z-10 w-[min(28rem,78%)] -rotate-2">
+                    <div className="relative rounded-2xl border border-border bg-background/85 p-5 shadow-sm backdrop-blur">
+                      <p className="text-xs font-medium uppercase tracking-widest text-primary">Birthday card</p>
+                      <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground">{message}</p>
+                    </div>
+                    <div className="pointer-events-none absolute -right-4 -top-3 h-8 w-20 rotate-12 rounded bg-amber-200/30 blur-[0.2px]" />
+                  </div>
+
+                  {/* Logo mark on box */}
+                  <div className="pointer-events-none absolute bottom-6 left-1/2 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-xl bg-background/20 text-white">
+                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 12h3l2-6 4 12 2-6h5" />
+                    </svg>
+                  </div>
                 </div>
 
                 <p className="mt-4 text-center text-xs text-muted-foreground">
