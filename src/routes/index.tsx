@@ -63,13 +63,26 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
     "Lots of love Nix and Sha";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen overflow-hidden bg-background">
       <Header />
-      <div className="relative overflow-hidden">
+
+      <style>{`
+        @keyframes brynier-sparkle-pop {
+          0% { transform: translate(var(--x0), var(--y0)) scale(0.2) rotate(0deg); opacity: 0; }
+          15% { opacity: 1; }
+          100% { transform: translate(var(--x1), var(--y1)) scale(1.1) rotate(240deg); opacity: 0; }
+        }
+        .brynier-sparkle {
+          animation: brynier-sparkle-pop 900ms ease-out forwards;
+          will-change: transform, opacity;
+        }
+      `}</style>
+
+      <div className="relative">
         <div className="grid-bg pointer-events-none absolute inset-0 opacity-70" />
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-0 h-96 bg-gradient-hero opacity-[0.10]" />
 
-        {/* Streamers */}
+        {/* Decorative blobs */}
         <div className="pointer-events-none absolute left-0 top-0 h-56 w-56 -translate-x-10 -translate-y-10 rounded-full bg-primary/20 blur-3xl" />
         <div className="pointer-events-none absolute right-0 top-0 h-56 w-56 translate-x-10 -translate-y-10 rounded-full bg-fuchsia-500/15 blur-3xl" />
 
@@ -87,8 +100,9 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
           <div className="mx-auto mt-1 h-12 w-px bg-emerald-400/30" />
         </div>
 
-        <div className="relative mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20">
-          <div className="mx-auto max-w-2xl text-center">
+        {/* Main stage: lock to viewport (minus header) so it never scrolls */}
+        <div className="relative mx-auto flex h-[calc(100vh-3.5rem)] max-w-6xl flex-col items-center justify-center px-4 sm:px-6">
+          <div className="mx-auto w-full max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
               <Gift className="h-3.5 w-3.5 text-primary" /> A one-day birthday surprise
             </span>
@@ -96,51 +110,56 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
               Happy Birthday, Pa
             </h1>
             <p className="mt-3 text-sm text-muted-foreground">
-              Unbox your gift to continue to the Brynier landing page.
+              Tap “Unbox the gift” to reveal Brynier.
             </p>
           </div>
 
-          <div className="mx-auto mt-10 grid max-w-4xl gap-6 lg:grid-cols-2">
-            {/* Gift box */}
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-card p-6 shadow-elev">
-              <div className="mx-auto flex max-w-sm flex-col items-center">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          {/* Gift box + attached card */}
+          <div className="relative mt-8 w-full max-w-4xl">
+            <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-card p-6 shadow-elev sm:p-10">
+              {/* Attached card */}
+              <div className="absolute left-6 top-6 z-10 w-[min(26rem,80%)] -rotate-2">
+                <div className="relative rounded-2xl border border-border bg-background/80 p-5 shadow-sm backdrop-blur">
+                  <div className="absolute -left-3 top-6 h-10 w-10 rotate-12 rounded-full bg-amber-300/50 blur-xl" />
+                  <p className="text-xs font-medium uppercase tracking-widest text-primary">Birthday card</p>
+                  <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground">{message}</p>
+                </div>
+                {/* Tape */}
+                <div className="pointer-events-none absolute -right-4 -top-3 h-8 w-20 rotate-12 rounded bg-amber-200/30 blur-[0.2px]" />
+              </div>
+
+              {/* Box body (big) */}
+              <div className="mx-auto mt-28 max-w-xl sm:mt-24">
+                <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 12h3l2-6 4 12 2-6h5" />
                   </svg>
                 </div>
 
-                <div className="relative w-full">
-                  <div className="mx-auto h-10 w-40 rounded-t-2xl border border-border bg-background/60" />
-                  <div className="mx-auto -mt-1 h-40 w-full max-w-sm rounded-2xl border border-border bg-background/60 shadow-sm" />
+                <div className="relative mt-6">
+                  <div className="mx-auto h-12 w-56 rounded-t-3xl border border-border bg-background/60" />
+                  <div className="mx-auto -mt-2 h-72 w-full rounded-3xl border border-border bg-background/60 shadow-sm sm:h-80" />
 
                   {/* Ribbon */}
-                  <div className="pointer-events-none absolute left-1/2 top-7 h-40 w-8 -translate-x-1/2 rounded bg-primary/60" />
-                  <div className="pointer-events-none absolute left-1/2 top-24 h-8 w-full max-w-sm -translate-x-1/2 rounded bg-primary/35" />
+                  <div className="pointer-events-none absolute left-1/2 top-6 h-[calc(100%-2.5rem)] w-10 -translate-x-1/2 rounded bg-primary/55" />
+                  <div className="pointer-events-none absolute left-1/2 top-1/2 h-10 w-[92%] -translate-x-1/2 -translate-y-1/2 rounded bg-primary/30" />
 
                   {/* Bow */}
-                  <div className="pointer-events-none absolute left-1/2 top-2 h-10 w-10 -translate-x-1/2 rounded-full bg-primary/45 blur-[0.5px]" />
+                  <div className="pointer-events-none absolute left-1/2 top-2 h-12 w-12 -translate-x-1/2 rounded-full bg-primary/45 blur-[0.5px]" />
                 </div>
 
-                <Button className="mt-6 w-full" size="lg" onClick={onUnbox}>
-                  Unbox the gift <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <p className="mt-3 text-xs text-muted-foreground">
+                <p className="mt-4 text-center text-xs text-muted-foreground">
                   Visible only on 25 May 2026 (00:00–12:00 SAST).
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Birthday card */}
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-card p-6 shadow-elev">
-              <p className="text-sm font-medium uppercase tracking-widest text-primary">Birthday card</p>
-              <div className="mt-4 rounded-xl border border-border bg-background/60 p-5">
-                <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{message}</p>
-              </div>
-              <p className="mt-4 text-xs text-muted-foreground">
-                (If you refresh later, it will disappear automatically after midday.)
-              </p>
-            </div>
+          {/* Bottom-right button */}
+          <div className="fixed bottom-5 right-5 z-20">
+            <Button size="lg" className="shadow-glow" onClick={onUnbox}>
+              Unbox the gift <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>
@@ -275,9 +294,49 @@ function LandingPage() {
   );
 }
 
-function Landing() {
+
+function SparkleOverlay() {
+  const sparks = [
+    { x0: -10, y0: 10, x1: -140, y1: -120, s: 18, d: 0 },
+    { x0: 0, y0: 0, x1: -60, y1: -180, s: 14, d: 80 },
+    { x0: 12, y0: 18, x1: 40, y1: -160, s: 16, d: 40 },
+    { x0: 18, y0: 0, x1: 160, y1: -120, s: 20, d: 10 },
+    { x0: -8, y0: 0, x1: 120, y1: -40, s: 12, d: 120 },
+    { x0: 0, y0: -8, x1: -120, y1: -40, s: 12, d: 140 },
+    { x0: 0, y0: 0, x1: 20, y1: 180, s: 10, d: 90 },
+    { x0: 0, y0: 0, x1: -20, y1: 180, s: 10, d: 110 },
+  ];
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+      <div className="absolute inset-0 bg-primary/10 backdrop-blur-[1px]" />
+      <div className="absolute left-1/2 top-1/2">
+        {sparks.map((sp, i) => (
+          <div
+            key={i}
+            className="brynier-sparkle absolute"
+            style={{
+              width: sp.s,
+              height: sp.s,
+              borderRadius: 9999,
+              background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,1), rgba(255,255,255,0) 65%)",
+              boxShadow: "0 0 22px rgba(79,70,229,0.45)",
+              transform: `translate(${sp.x0}px, ${sp.y0}px)`,
+              ['--x0' as any]: `${sp.x0}px`,
+              ['--y0' as any]: `${sp.y0}px`,
+              ['--x1' as any]: `${sp.x1}px`,
+              ['--y1' as any]: `${sp.y1}px`,
+              animationDelay: `${sp.d}ms`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}function Landing() {
   const [mounted, setMounted] = useState(false);
   const [unboxed, setUnboxed] = useState(false);
+  const [revealing, setRevealing] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -291,25 +350,33 @@ function Landing() {
   const showGift = useMemo(() => {
     if (!mounted) return false;
     if (unboxed) return false;
+    if (revealing) return false;
     try {
       return isBirthdayWindow();
     } catch {
       return false;
     }
-  }, [mounted, unboxed]);
+  }, [mounted, unboxed, revealing]);
 
   if (showGift) {
     return (
-      <BirthdayGate
-        onUnbox={() => {
-          try {
-            window.localStorage.setItem(GIFT_STORAGE_KEY, "1");
-          } catch {
-            // ignore
-          }
-          setUnboxed(true);
-        }}
-      />
+      <>
+        {revealing ? <SparkleOverlay /> : null}
+        <BirthdayGate
+          onUnbox={() => {
+            setRevealing(true);
+            window.setTimeout(() => {
+              try {
+                window.localStorage.setItem(GIFT_STORAGE_KEY, "1");
+              } catch {
+                // ignore
+              }
+              setUnboxed(true);
+              setRevealing(false);
+            }, 850);
+          }}
+        />
+      </>
     );
   }
 
