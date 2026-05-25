@@ -191,41 +191,71 @@ function BirthdayGate({ onUnbox }: { onUnbox: () => void }) {
           </div>
 
           {/* Gift box stage */}
-          <div className="relative mt-8 w-full max-w-4xl">
-            <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-card p-6 shadow-elev sm:p-10">
-              <div className="mx-auto max-w-xl">
-                <div className="relative mt-6">
-                  {/* Box lid */}
-                  <div className="mx-auto h-12 w-64 rounded-t-3xl border border-border bg-red-500/70 shadow-sm" />
+          <div className="relative mt-8 w-full max-w-5xl">
+            {/* Ground shadow */}
+            <div className="pointer-events-none absolute left-1/2 top-[74%] h-24 w-[min(42rem,92%)] -translate-x-1/2 rounded-full bg-black/20 blur-2xl" />
 
-                  {/* Box body */}
-                  <div className="mx-auto -mt-2 h-80 w-full rounded-3xl border border-border bg-red-600/70 shadow-elev sm:h-[26rem]" />
+            <div className="relative mx-auto w-full max-w-3xl">
+              {/* Box */}
+              <div className="relative mx-auto w-full">
+                <div className="brynier-giftbox relative mx-auto w-[min(34rem,92%)]">
+                  {/* Lid */}
+                  <div className="relative mx-auto h-24 w-full rounded-[2.25rem] bg-gradient-to-b from-red-500/95 to-red-600/95 shadow-elev">
+                    {/* Lid highlight */}
+                    <div className="pointer-events-none absolute inset-2 rounded-[2rem] bg-white/10" />
+                    {/* Lid lip */}
+                    <div className="pointer-events-none absolute bottom-0 left-4 right-4 h-3 rounded-b-[1.5rem] bg-black/10" />
 
-                  {/* Ribbon (yellow) */}
-                  <div className="pointer-events-none absolute left-1/2 top-6 h-[calc(100%-2.5rem)] w-10 -translate-x-1/2 rounded bg-yellow-300/90" />
-                  <div className="pointer-events-none absolute left-1/2 top-1/2 h-10 w-[92%] -translate-x-1/2 -translate-y-1/2 rounded bg-yellow-300/55" />
+                    {/* Top ribbon */}
+                    <div className="pointer-events-none absolute left-1/2 top-0 h-full w-16 -translate-x-1/2 rounded-[2rem] bg-gradient-to-b from-yellow-200/95 to-yellow-400/90" />
+                    <div className="brynier-ribbon-shine pointer-events-none absolute left-1/2 top-0 h-full w-16 -translate-x-1/2 rounded-[2rem]" />
 
-                  {/* Bow */}
-                  <div className="pointer-events-none absolute left-1/2 top-1 h-12 w-12 -translate-x-1/2 rounded-full bg-yellow-200/80 blur-[0.3px]" />
-
-                  {/* Note attached ON the box */}
-                  <div className="absolute left-6 top-10 z-10 w-[min(28rem,78%)] -rotate-2">
-                    <div className="relative rounded-2xl border border-border bg-background/85 p-5 shadow-sm backdrop-blur">
-                      <p className="text-xs font-medium uppercase tracking-widest text-primary">Birthday card</p>
-                      <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground">{message}</p>
+                    {/* Bow (more 3D) */}
+                    <div className="pointer-events-none absolute left-1/2 top-[-14px] -translate-x-1/2">
+                      <div className="brynier-bow relative">
+                        <div className="absolute -left-12 top-5 h-16 w-24 rounded-[999px] bg-gradient-to-br from-yellow-200 to-yellow-500 shadow" style={{ transform: "rotate(-18deg)" }} />
+                        <div className="absolute -right-12 top-5 h-16 w-24 rounded-[999px] bg-gradient-to-bl from-yellow-200 to-yellow-500 shadow" style={{ transform: "rotate(18deg)" }} />
+                        <div className="absolute -left-6 top-0 h-16 w-20 rounded-[999px] bg-gradient-to-br from-yellow-100 to-yellow-400 shadow" style={{ transform: "rotate(-38deg)" }} />
+                        <div className="absolute -right-6 top-0 h-16 w-20 rounded-[999px] bg-gradient-to-bl from-yellow-100 to-yellow-400 shadow" style={{ transform: "rotate(38deg)" }} />
+                        <div className="absolute left-1/2 top-10 h-10 w-10 -translate-x-1/2 rounded-full bg-gradient-to-b from-yellow-100 to-yellow-400 shadow" />
+                      </div>
                     </div>
-                    <div className="pointer-events-none absolute -right-4 -top-3 h-8 w-20 rotate-12 rounded bg-amber-200/30 blur-[0.2px]" />
                   </div>
 
-                  {/* Logo mark on box */}
-                  <div className="pointer-events-none absolute bottom-6 left-1/2 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-xl bg-background/20 text-white">
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M4 12h3l2-6 4 12 2-6h5" />
-                    </svg>
+                  {/* Box body */}
+                  <div className="relative mx-auto -mt-6 h-[28rem] w-[min(34rem,92%)] rounded-[2.25rem] bg-gradient-to-b from-red-600/95 to-red-700/95 shadow-elev sm:h-[32rem]">
+                    {/* Inner highlight */}
+                    <div className="pointer-events-none absolute inset-3 rounded-[2rem] bg-white/6" />
+
+                    {/* Side shading */}
+                    <div className="pointer-events-none absolute inset-y-0 left-0 w-10 rounded-l-[2.25rem] bg-black/10" />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 w-8 rounded-r-[2.25rem] bg-white/5" />
+
+                    {/* Vertical ribbon */}
+                    <div className="pointer-events-none absolute left-1/2 top-0 h-full w-16 -translate-x-1/2 bg-gradient-to-b from-yellow-200/95 to-yellow-500/90" />
+
+                    {/* Horizontal ribbon */}
+                    <div className="pointer-events-none absolute left-1/2 top-[45%] h-14 w-[94%] -translate-x-1/2 rounded-[2rem] bg-gradient-to-r from-yellow-200/70 via-yellow-300/70 to-yellow-200/70" />
+
+                    {/* Note attached ON the box */}
+                    <div className="absolute left-6 top-12 z-10 w-[min(28rem,78%)] -rotate-2">
+                      <div className="relative rounded-2xl border border-border bg-background/85 p-5 shadow-sm backdrop-blur">
+                        <p className="text-xs font-medium uppercase tracking-widest text-primary">Birthday card</p>
+                        <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground">{message}</p>
+                      </div>
+                      <div className="pointer-events-none absolute -right-4 -top-3 h-8 w-20 rotate-12 rounded bg-amber-200/30 blur-[0.2px]" />
+                    </div>
+
+                    {/* Logo mark on box */}
+                    <div className="pointer-events-none absolute bottom-7 left-1/2 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-xl bg-white/10 text-white">
+                      <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 12h3l2-6 4 12 2-6h5" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
 
-                <p className="mt-4 text-center text-xs text-muted-foreground">
+                <p className="mt-5 text-center text-xs text-muted-foreground">
                   Visible only on 25 May 2026 (00:00–12:00 SAST).
                 </p>
               </div>
