@@ -27,6 +27,8 @@ The goal is a production-ready core: secure env handling, stable auth, stable da
 
 ## Phase 1 — Production core stabilization (do next)
 
+Note: We are not using Cloudflare for deployment.
+
 1) Production backend (Supabase Cloud)
    - Create a Supabase Cloud project.
    - Apply migrations (tables + policies).

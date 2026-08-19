@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/signup")({
-  head: () => ({ meta: [{ title: "Create account â€” Brynier" }] }),
+  head: () => ({ meta: [{ title: "Create account — Brynier" }] }),
   component: SignupPage,
 });
 
@@ -39,7 +39,7 @@ function SignupPage() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created â€” check your email to verify.");
+    toast.success("Account created — check your email to verify.");
     navigate({ to: "/login", search: { redirect: "/dashboard" } });
   };
   const onGoogle = async () => {
@@ -91,7 +91,7 @@ function SignupPage() {
               <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creatingâ€¦" : "Create account"}
+              {loading ? "Creating…" : "Create account"}
             </Button>
           </form>
           <p className="mt-5 text-center text-sm text-muted-foreground">

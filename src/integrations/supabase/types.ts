@@ -51,34 +51,40 @@ export type Database = {
       }
       components: {
         Row: {
+          actual_unit_price: number | null
           created_at: string
           id: string
           name: string
           notes: string | null
           project_id: string
           purchase_link: string | null
+          purchased: boolean
           quantity: number | null
           user_id: string
           voltage: string | null
         }
         Insert: {
+          actual_unit_price?: number | null
           created_at?: string
           id?: string
           name: string
           notes?: string | null
           project_id: string
           purchase_link?: string | null
+          purchased?: boolean
           quantity?: number | null
           user_id: string
           voltage?: string | null
         }
         Update: {
+          actual_unit_price?: number | null
           created_at?: string
           id?: string
           name?: string
           notes?: string | null
           project_id?: string
           purchase_link?: string | null
+          purchased?: boolean
           quantity?: number | null
           user_id?: string
           voltage?: string | null
@@ -201,6 +207,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          budget_allocated: number
           cover_image_url: string | null
           created_at: string
           description: string | null
@@ -215,6 +222,7 @@ export type Database = {
           wiring_notes: string | null
         }
         Insert: {
+          budget_allocated?: number
           cover_image_url?: string | null
           created_at?: string
           description?: string | null
@@ -229,6 +237,7 @@ export type Database = {
           wiring_notes?: string | null
         }
         Update: {
+          budget_allocated?: number
           cover_image_url?: string | null
           created_at?: string
           description?: string | null

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+﻿import { Link } from "@tanstack/react-router";
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
@@ -9,7 +9,7 @@ export function Logo({ className = "" }: { className?: string }) {
         </svg>
       </span>
       <span className="text-base font-semibold tracking-tight text-foreground">
-        Tinker<span className="text-primary">Track</span>
+        Brynier
       </span>
     </Link>
   );

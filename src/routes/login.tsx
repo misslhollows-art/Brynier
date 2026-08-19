@@ -13,7 +13,7 @@ export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({
     redirect: typeof s.redirect === "string" ? s.redirect : fallback,
   }),
-  head: () => ({ meta: [{ title: "Sign in â€” Brynier" }] }),
+  head: () => ({ meta: [{ title: "Sign in — Brynier" }] }),
   component: LoginPage,
 });
 
@@ -85,7 +85,7 @@ function LoginPage() {
               <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing inâ€¦" : "Sign in"}
+              {loading ? "Signing in…" : "Sign in"}
             </Button>
           </form>
           <p className="mt-5 text-center text-sm text-muted-foreground">

@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/projects/$projectId")({
 
 const TABS = ["overview", "components", "wiring", "files", "journal", "ai"] as const;
 type Tab = (typeof TABS)[number];
+const formatRand = (amount: number) => `R${amount.toFixed(2)}`;
 
 function ProjectPage() {
   const { projectId } = Route.useParams();
@@ -75,7 +76,7 @@ function ProjectPage() {
               {["idea","building","testing","completed","failed"].map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
             <span className="text-xs text-muted-foreground capitalize">· {project.difficulty}</span>
-            {(project.estimated_cost ?? 0) > 0 && <span className="text-xs text-muted-foreground">· ~${project.estimated_cost}</span>}
+            {(project.estimated_cost ?? 0) > 0 && <span className="text-xs text-muted-foreground">· ~R{project.estimated_cost}</span>}
           </div>
         </div>
         <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive hover:bg-destructive/10 hover:text-destructive">
@@ -123,13 +124,32 @@ function Overview({ project, updateField }: { project: any; updateField: (p: any
   const [desc, setDesc] = useState(project.description ?? "");
   const [tags, setTags] = useState((project.tags ?? []).join(", "));
   const [cost, setCost] = useState(String(project.estimated_cost ?? 0));
+  const [budget, setBudget] = useState(String(project.budget_allocated ?? 0));
+  const { data: components = [] } = useQuery({
+    queryKey: ["components", project.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("components").select("quantity,actual_unit_price,purchased").eq("project_id", project.id);
+      if (error) throw error;
+      return data;
+    },
+  });
+  const actualSpent = components.reduce((total, component) => (
+    component.purchased ? total + (component.quantity ?? 1) * (component.actual_unit_price ?? 0) : total
+  ), 0);
+  const remaining = (project.budget_allocated ?? 0) - actualSpent;
   return (
     <div className="space-y-5 rounded-xl border border-border bg-gradient-card p-6">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <BudgetValue label="Estimated cost" value={formatRand(project.estimated_cost ?? 0)} />
+        <BudgetValue label="Budget allocated" value={formatRand(project.budget_allocated ?? 0)} />
+        <BudgetValue label="Actual spent" value={formatRand(actualSpent)} />
+        <BudgetValue label="Remaining" value={formatRand(remaining)} negative={remaining < 0} />
+      </div>
       <div className="space-y-1.5">
         <Label>Description</Label>
         <Textarea rows={5} value={desc} onChange={(e) => setDesc(e.target.value)} onBlur={() => updateField({ description: desc })} />
       </div>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-1.5">
           <Label>Tags (comma-separated)</Label>
           <Input value={tags} onChange={(e) => setTags(e.target.value)} onBlur={() => updateField({ tags: tags.split(",").map((s: string) => s.trim()).filter(Boolean) })} />
@@ -143,7 +163,7 @@ function Overview({ project, updateField }: { project: any; updateField: (p: any
           </select>
         </div>
         <div className="space-y-1.5">
-          <Label>Est. cost ($)</Label>
+          <Label>Est. cost (R)</Label>
           <Input
             type="number"
             min="0"
@@ -153,7 +173,27 @@ function Overview({ project, updateField }: { project: any; updateField: (p: any
             onBlur={() => updateField({ estimated_cost: Number(cost) || 0 })}
           />
         </div>
+        <div className="space-y-1.5">
+          <Label>Budget allocated (R)</Label>
+          <Input
+            type="number"
+            min="0"
+            step="0.5"
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+            onBlur={() => updateField({ budget_allocated: Number(budget) || 0 })}
+          />
+        </div>
       </div>
+    </div>
+  );
+}
+
+function BudgetValue({ label, value, negative = false }: { label: string; value: string; negative?: boolean }) {
+  return (
+    <div className="rounded-lg border border-border bg-background/50 p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className={`mt-1 text-lg font-semibold ${negative ? "text-destructive" : "text-foreground"}`}>{value}</p>
     </div>
   );
 }
@@ -169,13 +209,16 @@ function Components({ projectId }: { projectId: string }) {
   });
   const [name, setName] = useState(""); const [qty, setQty] = useState("1");
   const [voltage, setVoltage] = useState(""); const [notes, setNotes] = useState(""); const [link, setLink] = useState("");
+  const [actualPrice, setActualPrice] = useState(""); const [purchased, setPurchased] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [edit, setEdit] = useState<{ name: string; quantity: string; voltage: string; notes: string; purchase_link: string }>({
+  const [edit, setEdit] = useState<{ name: string; quantity: string; voltage: string; notes: string; purchase_link: string; actual_unit_price: string; purchased: boolean }>({
     name: "",
     quantity: "1",
     voltage: "",
     notes: "",
     purchase_link: "",
+    actual_unit_price: "",
+    purchased: false,
   });
 
   const add = async (e: React.FormEvent) => {
@@ -183,9 +226,10 @@ function Components({ projectId }: { projectId: string }) {
     const { data: u } = await supabase.auth.getUser(); if (!u.user) return;
     const { error } = await supabase.from("components").insert({
       project_id: projectId, user_id: u.user.id, name, quantity: Number(qty) || 1, voltage, notes, purchase_link: link,
+      actual_unit_price: actualPrice === "" ? null : Number(actualPrice), purchased,
     });
     if (error) return toast.error(error.message);
-    setName(""); setQty("1"); setVoltage(""); setNotes(""); setLink("");
+    setName(""); setQty("1"); setVoltage(""); setNotes(""); setLink(""); setActualPrice(""); setPurchased(false);
     qc.invalidateQueries({ queryKey: ["components", projectId] });
   };
 
@@ -202,6 +246,8 @@ function Components({ projectId }: { projectId: string }) {
       voltage: c.voltage ?? "",
       notes: c.notes ?? "",
       purchase_link: c.purchase_link ?? "",
+      actual_unit_price: c.actual_unit_price == null ? "" : String(c.actual_unit_price),
+      purchased: c.purchased ?? false,
     });
   };
 
@@ -217,6 +263,8 @@ function Components({ projectId }: { projectId: string }) {
       voltage: edit.voltage,
       notes: edit.notes,
       purchase_link: edit.purchase_link,
+      actual_unit_price: edit.actual_unit_price === "" ? null : Number(edit.actual_unit_price),
+      purchased: edit.purchased,
     }).eq("id", editingId);
     if (error) return toast.error(error.message);
     setEditingId(null);
@@ -225,12 +273,14 @@ function Components({ projectId }: { projectId: string }) {
 
   return (
     <div className="space-y-4">
-      <form onSubmit={add} className="grid gap-2 rounded-xl border border-border bg-gradient-card p-4 sm:grid-cols-[2fr_80px_100px_2fr_2fr_auto]">
+      <form onSubmit={add} className="grid gap-2 rounded-xl border border-border bg-gradient-card p-4 sm:grid-cols-2 lg:grid-cols-[2fr_80px_100px_2fr_2fr_140px_auto_auto]">
         <Input placeholder="Component name (e.g. ESP32)" value={name} onChange={(e) => setName(e.target.value)} required />
         <Input type="number" min="1" placeholder="Qty" value={qty} onChange={(e) => setQty(e.target.value)} />
         <Input placeholder="Voltage" value={voltage} onChange={(e) => setVoltage(e.target.value)} />
         <Input placeholder="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
         <Input placeholder="Purchase link" value={link} onChange={(e) => setLink(e.target.value)} />
+        <Input type="number" min="0" step="0.01" placeholder="Actual unit price (R)" value={actualPrice} onChange={(e) => setActualPrice(e.target.value)} />
+        <label className="flex items-center gap-2 text-sm text-muted-foreground"><input type="checkbox" checked={purchased} onChange={(e) => setPurchased(e.target.checked)} /> Bought</label>
         <Button type="submit"><Plus className="h-4 w-4" /></Button>
       </form>
 
@@ -246,6 +296,8 @@ function Components({ projectId }: { projectId: string }) {
                 <th className="px-3 py-2 text-left">Voltage</th>
                 <th className="px-3 py-2 text-left">Notes</th>
                 <th className="px-3 py-2 text-left">Link</th>
+                <th className="px-3 py-2 text-left">Actual price</th>
+                <th className="px-3 py-2 text-left">Bought</th>
                 <th className="px-3 py-2"></th>
               </tr>
             </thead>
@@ -287,6 +339,20 @@ function Components({ projectId }: { projectId: string }) {
                       <a href={c.purchase_link} target="_blank" rel="noreferrer" className="text-primary hover:underline">link</a>
                     ) : (
                       <span className="text-muted-foreground">—</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">
+                    {editingId === c.id ? (
+                      <Input type="number" min="0" step="0.01" value={edit.actual_unit_price} onChange={(e) => setEdit((p) => ({ ...p, actual_unit_price: e.target.value }))} />
+                    ) : (
+                      <span className="text-muted-foreground">{c.actual_unit_price == null ? "—" : formatRand(c.actual_unit_price)}</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">
+                    {editingId === c.id ? (
+                      <input type="checkbox" checked={edit.purchased} onChange={(e) => setEdit((p) => ({ ...p, purchased: e.target.checked }))} aria-label={`Mark ${c.name} as bought`} />
+                    ) : (
+                      <span className="text-muted-foreground">{c.purchased ? "Yes" : "No"}</span>
                     )}
                   </td>
                   <td className="px-3 py-2 text-right">
