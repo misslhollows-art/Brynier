@@ -29,8 +29,10 @@ ALTER TABLE project_media
 
 -- Basic sanity constraints
 ALTER TABLE components
-  ADD CONSTRAINT components_quantity_positive CHECK (quantity >= 1);
+  ADD CONSTRAINT components_quantity_positive CHECK (quantity >= 1),
+  ADD CONSTRAINT components_actual_unit_price_nonnegative CHECK (actual_unit_price IS NULL OR actual_unit_price >= 0);
 
 ALTER TABLE projects
-  ADD CONSTRAINT projects_estimated_cost_nonnegative CHECK (estimated_cost >= 0);
+  ADD CONSTRAINT projects_estimated_cost_nonnegative CHECK (estimated_cost >= 0),
+  ADD CONSTRAINT projects_budget_allocated_nonnegative CHECK (budget_allocated >= 0);
 

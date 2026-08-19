@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS projects (
   difficulty TEXT NOT NULL DEFAULT 'beginner',
   status TEXT NOT NULL DEFAULT 'idea',
   estimated_cost NUMERIC DEFAULT 0,
+  budget_allocated NUMERIC NOT NULL DEFAULT 0,
   wiring_notes TEXT DEFAULT '',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -40,6 +41,8 @@ CREATE TABLE IF NOT EXISTS components (
   voltage TEXT DEFAULT '',
   notes TEXT DEFAULT '',
   purchase_link TEXT DEFAULT '',
+  actual_unit_price NUMERIC,
+  purchased BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS components_project_idx ON components(project_id);

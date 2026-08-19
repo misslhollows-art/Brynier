@@ -23,6 +23,7 @@ function NewProject() {
   const [tags, setTags] = useState("");
   const [difficulty, setDifficulty] = useState("beginner");
   const [estimated_cost, setCost] = useState("0");
+  const [budgetAllocated, setBudgetAllocated] = useState("0");
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
@@ -54,6 +55,7 @@ function NewProject() {
       setTags(t.tags.join(", "));
       setDifficulty(t.difficulty);
       setCost(String(t.estimated_cost));
+      setBudgetAllocated(String(t.estimated_cost));
       if (t.components?.length) {
         setDraftComponents(
           t.components.map((c) => ({
@@ -109,6 +111,7 @@ function NewProject() {
         tags: tags.split(",").map((s) => s.trim()).filter(Boolean),
         difficulty,
         estimated_cost: Number(estimated_cost) || 0,
+        budget_allocated: Number(budgetAllocated) || 0,
         status: "idea",
       })
       .select()
@@ -185,7 +188,7 @@ function NewProject() {
               <Label htmlFor="desc">Description</Label>
               <Textarea id="desc" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What does it do? What's the goal?" />
             </div>
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="tags">Tags</Label>
                 <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="esp32, servo" />
@@ -201,6 +204,10 @@ function NewProject() {
               <div className="space-y-1.5">
                 <Label htmlFor="cost">Est. cost (R)</Label>
                 <Input id="cost" type="number" min="0" step="0.5" value={estimated_cost} onChange={(e) => setCost(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="budget">Budget allocated (R)</Label>
+                <Input id="budget" type="number" min="0" step="0.5" value={budgetAllocated} onChange={(e) => setBudgetAllocated(e.target.value)} />
               </div>
             </div>
           </div>
